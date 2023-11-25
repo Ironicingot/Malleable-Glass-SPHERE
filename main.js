@@ -21,6 +21,10 @@ let internalTime = getTime();
 let windowManager;
 let initialized = false;
 
+
+
+
+
 // get time in seconds since beginning of the day (so that all windows use the same time)
 function getTime ()
 {
@@ -50,11 +54,21 @@ else
 		}
 	};
 
-	function init ()
-	{
+	function init() {
 		initialized = true;
-
-		// add a short timeout because window.offsetX reports wrong values before a short period 
+	
+		// Check if the page is loaded for the first time or with the "clear" query parameter
+		const isFirstLoad = localStorage.getItem("firstLoad") === null || new URLSearchParams(window.location.search).get("clear");
+	
+		console.log("Is First Load:", isFirstLoad);
+	
+		if (isFirstLoad) {
+			console.log("Clearing Local Storage");
+			localStorage.clear();
+			localStorage.setItem("firstLoad", "false"); // Set a marker to indicate that local storage has been cleared once
+		}
+	
+		// add a short timeout because window.offsetX reports wrong values before a short period
 		setTimeout(() => {
 			setupScene();
 			setupWindowManager();
@@ -62,7 +76,7 @@ else
 			updateWindowShape(false);
 			render();
 			window.addEventListener('resize', resize);
-		}, 500)	
+		}, 500);
 	}
 
 	function setupScene ()
